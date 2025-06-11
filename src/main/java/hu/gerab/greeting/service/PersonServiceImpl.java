@@ -68,4 +68,13 @@ public class PersonServiceImpl implements PersonService {
   public List<Person> listPersons() {
     return personRepository.findAll();
   }
+
+  @Override
+  public Person getPerson(long id) {
+    Optional<Person> byId = personRepository.findById(id);
+    if (byId.isEmpty()) {
+      throw new IllegalArgumentException("No person exists for id=" + id);
+    }
+    return byId.get();
+  }
 }

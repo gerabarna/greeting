@@ -4,6 +4,7 @@ import static java.util.stream.Collectors.*;
 
 import hu.gerab.greeting.domain.Gender;
 import hu.gerab.greeting.domain.Person;
+import hu.gerab.greeting.service.LLMService;
 import hu.gerab.greeting.service.PersonService;
 import java.time.LocalDate;
 import java.util.Arrays;
@@ -20,10 +21,12 @@ public class PersonController implements PersonAPI {
   public static final Comparator<PersonDTO> PERSON_DTO_ID_COMPARATOR =
       Comparator.comparing(PersonDTO::getId);
   private final PersonService personService;
+  private final LLMService llmService;
 
   @Autowired
-  public PersonController(PersonService personService) {
+  public PersonController(PersonService personService, LLMService llmService) {
     this.personService = personService;
+    this.llmService = llmService;
   }
 
   @Override
@@ -44,29 +47,40 @@ public class PersonController implements PersonAPI {
 
   @Override
   public long createPerson(String name, LocalDate birthDate, String gender, String interests) {
-    long id = personService.createPerson(name, birthDate, mapGender(gender), parseInterests(interests));
+    long id =
+        personService.createPerson(name, validateBirthDate(birthDate), mapGender(gender), parseInterests(interests));
     return id;
   }
 
+  private static LocalDate validateBirthDate(LocalDate birthDate) {
+    if (birthDate.isAfter(LocalDate.now())) {
+      throw new IllegalArgumentException(
+          "Please specify a valid birth data. Supplied date=" + birthDate + " is in the future");
+    }
+    return birthDate;
+  }
+
   private static Set<String> parseInterests(String interests) {
-    if (interests == null || interests.isBlank()){
+    if (interests == null || interests.isBlank()) {
       return null;
     }
     return Arrays.stream(interests.split(","))
-            .map(String::trim).map(String::toLowerCase).collect(toSet());
+        .map(String::trim)
+        .map(String::toLowerCase)
+        .collect(toSet());
   }
 
   private static Gender mapGender(String gender) {
-    if (gender == null){
+    if (gender == null) {
       return null;
     }
-      return Gender.valueOf(gender.trim().toUpperCase());
+    return Gender.valueOf(gender.trim().toUpperCase());
   }
 
   @Override
   public void updatePerson(
       long id, String name, LocalDate birthDate, String gender, String interests) {
-    personService.updatePerson(id, name, birthDate, mapGender(gender), parseInterests(interests));
+    personService.updatePerson(id, name, validateBirthDate(birthDate), mapGender(gender), parseInterests(interests));
   }
 
   @Override
@@ -76,6 +90,7 @@ public class PersonController implements PersonAPI {
 
   @Override
   public String greetPerson(long id) {
-    return null;
+    final Person person = personService.getPerson(id);
+    return llmService.generateBirthdayGreeting(person);
   }
 }

@@ -12,6 +12,8 @@ public interface PersonService {
   @Nonnull
   List<Person> listPersons();
 
+  Person getPerson(long id);
+
   long createPerson(String name, LocalDate birthDate, Gender gender, Set<String> interests);
 
   void updatePerson(
