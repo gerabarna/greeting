@@ -1,0 +1,12 @@
+services:
+  #Run this version of the kafka container if you want to use the host's network - like running the code locally
+  ollama:
+    image: ollama/ollama:0.9.1-rc0
+    container_name: ollama
+    restart: on-failure
+    ports:
+      - '11434:11434'
+    volumes:
+      - ./.ollama_data:/root/.ollama
+      - ./ollama_start.sh:/start.sh
+    entrypoint: [ "bash", "-c", "/start.sh" ]

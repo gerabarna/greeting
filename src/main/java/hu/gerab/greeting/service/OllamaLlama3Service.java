@@ -7,6 +7,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
@@ -14,10 +15,13 @@ import org.springframework.web.reactive.function.client.WebClient;
 @Slf4j
 public class OllamaLlama3Service implements LLMService {
   private final WebClient webClient;
+  private final String llama3ModelVersion;
 
   @Autowired
-  public OllamaLlama3Service(WebClient webClient) {
+  public OllamaLlama3Service(
+      WebClient webClient, @Value("${ollama.model.version}") String ollamaModelVersion) {
     this.webClient = webClient;
+    this.llama3ModelVersion = ollamaModelVersion;
   }
 
   @Override
@@ -25,9 +29,10 @@ public class OllamaLlama3Service implements LLMService {
     final String prompt = generateBirthdayPrompt(person);
     LOGGER.trace("Sending prompt='{}' to llama3", prompt);
 
-    OllamaRequest request = OllamaRequest.create(prompt);
+    OllamaRequest request = OllamaRequest.create(llama3ModelVersion, prompt);
 
-    final String greeting = webClient
+    final String greeting =
+        webClient
             .post()
             .uri("/api/generate")
             .bodyValue(request)
@@ -62,8 +67,8 @@ public class OllamaLlama3Service implements LLMService {
 
   public record OllamaRequest(
       String model, String prompt, boolean stream, Map<String, Object> options) {
-    public static OllamaRequest create(String prompt) {
-      return new OllamaRequest("llama3", prompt, false, Map.of());
+    public static OllamaRequest create(String model, String prompt) {
+      return new OllamaRequest(model, prompt, false, Map.of());
     }
   }
 

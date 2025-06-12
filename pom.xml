@@ -139,7 +139,6 @@
                         <jvmFlags>
                             <jvmFlag>-Xms256m</jvmFlag>
                             <jvmFlag>-Xmx512m</jvmFlag>
-                            <jvmFlag>-Dspring.profiles.active=prod</jvmFlag>
                         </jvmFlags>
                         <format>Docker</format>
                     </container>
