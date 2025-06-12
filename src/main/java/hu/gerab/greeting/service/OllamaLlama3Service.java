@@ -26,6 +26,9 @@ public class OllamaLlama3Service implements LLMService {
 
   @Override
   public String generateBirthdayGreeting(Person person) {
+    if (person == null) {
+      throw new IllegalArgumentException("No person supplied.");
+    }
     final String prompt = generateBirthdayPrompt(person);
     LOGGER.trace("Sending prompt='{}' to llama3", prompt);
 
@@ -57,8 +60,11 @@ public class OllamaLlama3Service implements LLMService {
     } else {
       sb.append("person ");
     }
+    if (person.getName() !=null){
+      sb.append("named ").append(person.getName()).append(" ");
+    }
     if (person.getInterests() != null) {
-      sb.append(" who is interested in: ").append(String.join(",", person.getInterests()));
+      sb.append("who is interested in: ").append(String.join(",", person.getInterests()));
     }
     sb.append(". Only respond with the generated message.");
     String prompt = sb.toString();

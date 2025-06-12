@@ -53,7 +53,7 @@ public class PersonServiceImpl implements PersonService {
     if (interests != null) {
       person.setInterests(interests);
     }
-    personRepository.save(person);
+    personRepository.saveAndFlush(person);
   }
 
   @Override
