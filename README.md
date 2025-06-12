@@ -22,7 +22,11 @@ To persist data a file H2 db is used. For testing this is replaced with an in-me
 
 ### Source format
 I used the google source format plugin in IntelliJ to format the project as that is a widely used formatter. 
-However this is not supplied with the project. 
+However this is not supplied with the project.
+
+### CLI
+Created a simple bash based CLI. Please check [cli.sh](cli.sh). Fur further info type:
+```./cli.sh help```
 
 ## Tests
 I used JUnit with mockito for the tests. To "showcase" both integration and unit tests, 

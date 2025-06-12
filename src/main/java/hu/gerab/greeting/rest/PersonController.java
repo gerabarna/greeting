@@ -48,11 +48,15 @@ public class PersonController implements PersonAPI {
   @Override
   public long createPerson(String name, LocalDate birthDate, String gender, String interests) {
     long id =
-        personService.createPerson(name, validateBirthDate(birthDate), mapGender(gender), parseInterests(interests));
+        personService.createPerson(
+            name, validateBirthDate(birthDate), mapGender(gender), parseInterests(interests));
     return id;
   }
 
   private static LocalDate validateBirthDate(LocalDate birthDate) {
+    if (birthDate == null) {
+      return null;
+    }
     if (birthDate.isAfter(LocalDate.now())) {
       throw new IllegalArgumentException(
           "Please specify a valid birth data. Supplied date=" + birthDate + " is in the future");
@@ -80,7 +84,8 @@ public class PersonController implements PersonAPI {
   @Override
   public void updatePerson(
       long id, String name, LocalDate birthDate, String gender, String interests) {
-    personService.updatePerson(id, name, validateBirthDate(birthDate), mapGender(gender), parseInterests(interests));
+    personService.updatePerson(
+        id, name, validateBirthDate(birthDate), mapGender(gender), parseInterests(interests));
   }
 
   @Override
