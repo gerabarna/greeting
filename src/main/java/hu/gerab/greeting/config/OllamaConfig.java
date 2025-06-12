@@ -19,7 +19,7 @@ public class OllamaConfig {
     @Bean
     public WebClient ollamaWebClient() {
         return WebClient.builder()
-                .baseUrl(ollamaHost) // Ollama default URL
+                .baseUrl(ollamaHost)
                 .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
                 .build();
     }
